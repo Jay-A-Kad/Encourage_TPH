@@ -1,9 +1,6 @@
 using UnityEngine;
 
-/// <summary>
-/// ScriptableObject that holds all tunable values for the hype meter and crusher behavior.
-/// Create via: Assets > Create > EncourageMan > Hype Config
-/// </summary>
+
 [CreateAssetMenu(fileName = "HypeConfig", menuName = "EncourageMan/Hype Config")]
 public class HypeConfig : ScriptableObject
 {
@@ -21,24 +18,22 @@ public class HypeConfig : ScriptableObject
     [Range(0f, 100f)] public float strongThreshold = 75f;
 
     [Header("Crusher Movement")]
-    [Tooltip("Closing speed (units/sec) when hype is 0")]
+    [Tooltip("Closing speed  when hype is 0")]
     public float baseCloseSpeed = 1.5f;
-    [Tooltip("Push-back speed (units/sec) at full invincible hype")]
+    [Tooltip("Push-back speed at full invincible hype")]
     public float maxPushBackSpeed = 0.5f;
     [Tooltip("Starting distance of each crusher from scene center")]
     public float startDistance = 8f;
-    [Tooltip("Crusher is pushed back to this distance on full hype (visual win)")]
+    [Tooltip("Crusher is pushed back to this distance on full hype ")]
     public float winDistance = 10f;
     [Tooltip("Crusher closer than this triggers death")]
     public float deathDistance = 1.5f;
 
     [Header("Word Completion Burst")]
-    [Tooltip("How long the push-back burst lasts after a word is completed")]
     public float wordBurstDuration = 0.4f;
     [Tooltip("Speed multiplier applied during the burst window")]
     public float wordBurstSpeedMultiplier = 2.5f;
 
     [Header("Stage")]
-    [Tooltip("Surviving this many seconds triggers the win condition")]
     public float stageDuration = 30f;
 }

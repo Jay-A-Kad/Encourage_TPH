@@ -1,39 +1,28 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-/// <summary>
-/// Controls EncourageMan's animation state machine and ragdoll death sequence.
-///
-/// Animator parameters expected (configure in man.controller to match):
-///   int  "HypeState"       — 0=Weak, 1=Struggling, 2=Strong, 3=Invincible
-///   bool "IsDead"          — true activates death blend
-///   trigger "WordCompleted" — plays a flex/shout animation
-///   trigger "Win"           — plays heroic end pose
-///
-/// Ragdoll setup:
-///   Assign every Rigidbody in the ragdoll hierarchy to ragdollBodies[].
-///   They should be kinematic at rest; this script enables them on death.
-/// </summary>
+
+//TODO: add animation once done with game 
+
 [RequireComponent(typeof(Animator))]
 public class EncourageManController : MonoBehaviour
 {
-    [Header("Ragdoll — assign all child Rigidbodies")]
+    [Header("child Rigidbodies")]
     public Rigidbody[] ragdollBodies;
 
     [Header("Animator Parameter Names")]
-    public string hypeStateParam      = "HypeState";
-    public string isDeadParam         = "IsDead";
+    public string hypeStateParam = "HypeState";
+    public string isDeadParam = "IsDead";
     public string wordCompletedTrigger = "WordCompleted";
-    public string winTrigger          = "Win";
+    public string winTrigger = "Win";
 
     [Header("Events")]
     public UnityEvent onDied;
     public UnityEvent onWon;
 
     private Animator _animator;
-    private bool     _isDead;
+    private bool _isDead;
 
-    // ── Lifecycle ────────────────────────────────────────────────────
 
     private void Awake()
     {
@@ -41,7 +30,6 @@ public class EncourageManController : MonoBehaviour
         SetRagdollActive(false);
     }
 
-    /// <summary>Reset to idle/ready state. Call before every game session.</summary>
     public void Initialize()
     {
         _isDead = false;
@@ -51,25 +39,21 @@ public class EncourageManController : MonoBehaviour
         _animator.SetBool(isDeadParam, false);
     }
 
-    // ── State callbacks (wired by StageManager) ──────────────────────
 
-    /// <summary>Wired to HypeMeterController.onStateChanged.</summary>
     public void OnHypeStateChanged(HypeState state)
     {
         if (_isDead) return;
         _animator.SetInteger(hypeStateParam, (int)state);
     }
 
-    /// <summary>Wired to TypingController.onWordCompleted.</summary>
+
     public void OnWordCompleted()
     {
         if (_isDead) return;
         _animator.SetTrigger(wordCompletedTrigger);
     }
 
-    // ── End states ───────────────────────────────────────────────────
 
-    /// <summary>Switch to ragdoll — called by StageManager on lose.</summary>
     public void Die()
     {
         if (_isDead) return;
@@ -80,7 +64,7 @@ public class EncourageManController : MonoBehaviour
         onDied?.Invoke();
     }
 
-    /// <summary>Trigger heroic win animation — called by StageManager on win.</summary>
+
     public void Win()
     {
         if (_isDead) return;
@@ -89,7 +73,7 @@ public class EncourageManController : MonoBehaviour
         onWon?.Invoke();
     }
 
-    // ── Private helpers ──────────────────────────────────────────────
+
 
     private void SetRagdollActive(bool active)
     {

@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d110b11c2cfc4b789b8a18c50f77b40, type: 3}
   m_Name: HypeConfig
   m_EditorClassIdentifier: 
-  startValue: 40
+  startValue: 20
   maxValue: 100
-  correctLetterGain: 2
-  completedWordGain: 8
+  correctLetterGain: 1
+  completedWordGain: 3
   wrongKeyPenalty: 4
   passiveDecayPerSecond: 5
   weakThreshold: 25
