@@ -23,9 +23,9 @@ MonoBehaviour:
   strongThreshold: 75
   baseCloseSpeed: 0.05
   maxPushBackSpeed: 0.04
-  startDistance: 0
-  winDistance: 3
-  deathDistance: -2
+  startDistance: 3.2
+  winDistance: 6
+  deathDistance: -6
   wordBurstDuration: 0.4
   wordBurstSpeedMultiplier: 1
   stageDuration: 30
