@@ -1,6 +1,6 @@
-# Encourage:The Power of HYPE
-**Genre:** Typing / Rhythm Arcade
+# EncourageMan:The Power of HYPE
 
+**Genre:** Typing / Rhythm Arcade
 
 ## 1. Game Overview
 
@@ -73,7 +73,7 @@ Subscribes to `onStreakChanged`. Converts raw streak count to `(streak - 1)x` di
                     ┌─────────▼──────────┐
                     │  TypingController  │
                     │                    │
-              
+
       │  - Letter matching │
                     │  - Word selection  │
                     │  - Streak tracking │
@@ -118,26 +118,32 @@ Subscribes to `onStreakChanged`. Converts raw streak count to `(streak - 1)x` di
 ## 13. TODO
 
 ### Gameplay
+
 - [ ] Add a score system (words typed, streak multiplier, time survived)
 - [ ] Add multiple stages or a stage select screen
 - [ ] Add a difficulty selector (Easy / Normal / Hard) that swaps `HypeConfig` presets
 
 ### EncourageMan
+
 - [ ] Add a camera shake or screen effect on death
 
 ### Audio
+
 - [ ] Add a background music track that changes intensity based on hype state
 - [ ] Consider a countdown voice-over (3, 2, 1, HYPE!)
 
 ### UI / UX
+
 - [ ] Add a combo-break visual feedback (screen flash or shake on wrong key at high streak)
 - [ ] Show total words typed and accuracy % on the result panel
 - [ ] Add a high score / personal best display on the result panel
 - [ ] Mobile: replace keyboard input with on-screen tap targets
 
 ### Polish & Juice
+
 - [ ] Add particle effects on word completion burst
 - [ ] Add crusher impact effects when they slam shut on lose
 
 ### Technical
+
 - [ ] Implement save/load for high scores using `PlayerPrefs` or a JSON save file
