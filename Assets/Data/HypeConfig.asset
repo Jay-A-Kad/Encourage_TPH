@@ -25,7 +25,7 @@ MonoBehaviour:
   maxPushBackSpeed: 0.04
   startDistance: 3.2
   winDistance: 6
-  deathDistance: -6
+  deathDistance: 2.5
   wordBurstDuration: 0.4
   wordBurstSpeedMultiplier: 1
   stageDuration: 30

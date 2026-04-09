@@ -23,10 +23,22 @@ public class EncourageManController : MonoBehaviour
     private Animator _animator;
     private bool _isDead;
 
+    private Vector3[] _ragdollLocalPositions;
+    private Quaternion[] _ragdollLocalRotations;
+
 
     private void Awake()
     {
         _animator = GetComponent<Animator>();
+
+        _ragdollLocalPositions = new Vector3[ragdollBodies.Length];
+        _ragdollLocalRotations = new Quaternion[ragdollBodies.Length];
+        for (int i = 0; i < ragdollBodies.Length; i++)
+        {
+            _ragdollLocalPositions[i] = ragdollBodies[i].transform.localPosition;
+            _ragdollLocalRotations[i] = ragdollBodies[i].transform.localRotation;
+        }
+
         SetRagdollActive(false);
     }
 
@@ -34,7 +46,15 @@ public class EncourageManController : MonoBehaviour
     {
         _isDead = false;
         SetRagdollActive(false);
+
+        for (int i = 0; i < ragdollBodies.Length; i++)
+        {
+            ragdollBodies[i].transform.localPosition = _ragdollLocalPositions[i];
+            ragdollBodies[i].transform.localRotation = _ragdollLocalRotations[i];
+        }
+
         _animator.enabled = true;
+        _animator.Rebind();
         _animator.SetInteger(hypeStateParam, (int)HypeState.Struggling);
         _animator.SetBool(isDeadParam, false);
     }
@@ -80,6 +100,9 @@ public class EncourageManController : MonoBehaviour
         foreach (Rigidbody rb in ragdollBodies)
         {
             rb.isKinematic = !active;
+            rb.collisionDetectionMode = active
+                ? CollisionDetectionMode.Continuous
+                : CollisionDetectionMode.Discrete;
             if (rb.TryGetComponent<Collider>(out var col))
                 col.enabled = active;
         }

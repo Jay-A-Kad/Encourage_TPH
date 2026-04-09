@@ -131,11 +131,10 @@ public class KeyboardDisplayUI : MonoBehaviour
         return new KeyVisual { background = img, label = tmp };
     }
 
-    // ── Key flash ─────────────────────────────────────────────────────
 
     private void FlashKey(KeyVisual kv)
     {
-        // Cancel any in-progress reset so rapid presses don't glitch
+
         if (kv.resetRoutine != null)
             StopCoroutine(kv.resetRoutine);
 

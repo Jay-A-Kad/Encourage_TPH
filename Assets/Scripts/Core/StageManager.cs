@@ -15,6 +15,7 @@ public class StageManager : MonoBehaviour
     public CrusherController crusherLeft;
     public CrusherController crusherRight;
     public EncourageManController encourageMan;
+    public GameAudioController gameAudio;
 
     [Header("UI Controllers")]
     public RulesPanelUI rulesPanel;
@@ -102,6 +103,7 @@ public class StageManager : MonoBehaviour
         crusherLeft.Initialize();
         crusherRight.Initialize();
         encourageMan.Initialize();
+        gameAudio?.Initialize();
         _activeTimer = 0f;
         _losePending = false;
     }
@@ -134,6 +136,7 @@ public class StageManager : MonoBehaviour
         typingController.SetActive(true);
         crusherLeft.SetActive(true);
         crusherRight.SetActive(true);
+        gameAudio?.StartHeckler();
         SetHUDVisible(true);
 
         onGameStarted?.Invoke();
@@ -149,6 +152,7 @@ public class StageManager : MonoBehaviour
         crusherLeft.SetActive(false);
         crusherRight.SetActive(false);
 
+        gameAudio?.StopHeckler();
         encourageMan.Win();
         resultPanel.ShowWin();
         onPlayerWon?.Invoke();
@@ -164,9 +168,16 @@ public class StageManager : MonoBehaviour
         crusherLeft.SlamShut();
         crusherRight.SlamShut();
 
+        gameAudio?.StopHeckler();
         encourageMan.Die();
-        resultPanel.ShowLose();
         onPlayerLost?.Invoke();
+        StartCoroutine(ShowLoseResultDelayed());
+    }
+
+    private IEnumerator ShowLoseResultDelayed()
+    {
+        yield return new WaitForSeconds(1f);
+        resultPanel.ShowLose();
     }
 
     private void OnLoseConditionMet()

@@ -16,6 +16,9 @@ public class TypingController : MonoBehaviour
     public UnityEvent<string> onNewWord;
     public UnityEvent<string, int> onTypingProgress;
 
+    // streak: 1 = first word, 2 = second consecutive, etc.
+    public UnityEvent<int> onStreakChanged;
+
     public string CurrentWord => _currentWord;
     public int LettersTyped => _lettersTyped;
 
@@ -23,6 +26,7 @@ public class TypingController : MonoBehaviour
     private int _lettersTyped;
     private bool _active;
     private float _elapsedTime;
+    private int _streak;
 
 
     public void Initialize()
@@ -31,6 +35,7 @@ public class TypingController : MonoBehaviour
         _elapsedTime = 0f;
         _currentWord = string.Empty;
         _lettersTyped = 0;
+        _streak = 0;
     }
 
     public void SetActive(bool active)
@@ -68,12 +73,19 @@ public class TypingController : MonoBehaviour
 
             if (_lettersTyped >= _currentWord.Length)
             {
+                _streak++;
                 onWordCompleted?.Invoke();
+                onStreakChanged?.Invoke(_streak);
                 PickNewWord();
             }
         }
         else
         {
+            if (_streak > 0)
+            {
+                _streak = 0;
+                onStreakChanged?.Invoke(_streak);
+            }
             onWrongKey?.Invoke();
         }
     }
