@@ -7,7 +7,7 @@ using UnityEngine.Events;
 [RequireComponent(typeof(Animator))]
 public class EncourageManController : MonoBehaviour
 {
-    [Header("child Rigidbodies")]
+    [Header("Child Rigidbodies")]
     public Rigidbody[] ragdollBodies;
 
     [Header("Animator Parameter Names")]
@@ -15,6 +15,16 @@ public class EncourageManController : MonoBehaviour
     public string isDeadParam = "IsDead";
     public string wordCompletedTrigger = "WordCompleted";
     public string winTrigger = "Win";
+
+    [Header("Arm Push IK")]
+    public CrusherController crusherLeft;
+    public CrusherController crusherRight;
+    [Tooltip("Crusher distance from center at which arms start reacting")]
+    public float armReactDistance = 3.5f;
+    [Tooltip("Y offset from character root to approximate hand height")]
+    public float handHeightOffset = 1.2f;
+    [Tooltip("Z offset for the IK target (positive = forward)")]
+    public float handForwardOffset = 0.3f;
 
     [Header("Events")]
     public UnityEvent onDied;
@@ -94,6 +104,39 @@ public class EncourageManController : MonoBehaviour
     }
 
 
+
+    // Called automatically by the Animator
+    private void OnAnimatorIK(int layerIndex)
+    {
+        if (_isDead) return;
+        ApplyArmIK(AvatarIKGoal.LeftHand,  crusherLeft,  -1f);
+        ApplyArmIK(AvatarIKGoal.RightHand, crusherRight,  1f);
+    }
+    private void ApplyArmIK(AvatarIKGoal goal, CrusherController crusher, float facingSign)
+    {
+        if (crusher == null)
+        {
+            _animator.SetIKPositionWeight(goal, 0f);
+            return;
+        }
+
+        float dist = crusher.DistanceFromCenter;
+        float weight = Mathf.Clamp01(1f - dist / armReactDistance);
+
+        _animator.SetIKPositionWeight(goal, weight);
+        _animator.SetIKRotationWeight(goal, 0f); 
+
+        if (weight > 0f)
+        {
+            float handX = crusher.transform.position.x + facingSign * 0.15f;
+            Vector3 ikTarget = new Vector3(
+                handX,
+                transform.position.y + handHeightOffset,
+                transform.position.z + handForwardOffset);
+
+            _animator.SetIKPosition(goal, ikTarget);
+        }
+    }
 
     private void SetRagdollActive(bool active)
     {

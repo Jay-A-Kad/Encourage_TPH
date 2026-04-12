@@ -15,6 +15,7 @@ public class StageManager : MonoBehaviour
     public CrusherController crusherLeft;
     public CrusherController crusherRight;
     public EncourageManController encourageMan;
+    public EncourageManPunchController punchController; // T2 only
     public GameAudioController gameAudio;
 
     [Header("UI Controllers")]
@@ -33,6 +34,9 @@ public class StageManager : MonoBehaviour
     public UnityEvent onPlayerWon;
     public UnityEvent onPlayerLost;
 
+
+    public float TimeRemaining => Mathf.Max(0f, config.stageDuration - _activeTimer);
+    public bool IsActive => _state == StageState.Active;
 
     private StageState _state;
     private float _activeTimer;
@@ -60,6 +64,8 @@ public class StageManager : MonoBehaviour
                 _activeTimer += Time.deltaTime;
                 if (_activeTimer >= config.stageDuration)
                     TriggerWin();
+                else if (hypeMeter.NormalizedHype >= config.hypeWinThreshold)
+                    TriggerWin();
                 break;
         }
     }
@@ -81,9 +87,9 @@ public class StageManager : MonoBehaviour
         typingController.onWordCompleted.AddListener(hypeMeter.OnWordCompleted);
         typingController.onWrongKey.AddListener(hypeMeter.OnWrongKey);
 
-        // Word completion - crusher bursts + encourageman flex
-        typingController.onWordCompleted.AddListener(crusherLeft.TriggerWordBurst);
-        typingController.onWordCompleted.AddListener(crusherRight.TriggerWordBurst);
+        
+        if (crusherLeft != null)  typingController.onWordCompleted.AddListener(crusherLeft.TriggerWordBurst);
+        if (crusherRight != null) typingController.onWordCompleted.AddListener(crusherRight.TriggerWordBurst);
         typingController.onWordCompleted.AddListener(encourageMan.OnWordCompleted);
 
         // Hype state = encourageman visuals
@@ -91,8 +97,8 @@ public class StageManager : MonoBehaviour
 
         // Lose conditions
         hypeMeter.onHypeDepleted.AddListener(OnLoseConditionMet);
-        crusherLeft.onDeathZoneReached.AddListener(OnLoseConditionMet);
-        crusherRight.onDeathZoneReached.AddListener(OnLoseConditionMet);
+        if (crusherLeft != null)  crusherLeft.onDeathZoneReached.AddListener(OnLoseConditionMet);
+        if (crusherRight != null) crusherRight.onDeathZoneReached.AddListener(OnLoseConditionMet);
     }
 
 
@@ -100,8 +106,8 @@ public class StageManager : MonoBehaviour
     {
         hypeMeter.Initialize();
         typingController.Initialize();
-        crusherLeft.Initialize();
-        crusherRight.Initialize();
+        if (crusherLeft != null)  crusherLeft.Initialize();
+        if (crusherRight != null) crusherRight.Initialize();
         encourageMan.Initialize();
         gameAudio?.Initialize();
         _activeTimer = 0f;
@@ -134,8 +140,9 @@ public class StageManager : MonoBehaviour
 
         hypeMeter.SetActive(true);
         typingController.SetActive(true);
-        crusherLeft.SetActive(true);
-        crusherRight.SetActive(true);
+        if (crusherLeft != null)  crusherLeft.SetActive(true);
+        if (crusherRight != null) crusherRight.SetActive(true);
+        punchController?.SetActive(true);
         gameAudio?.StartHeckler();
         SetHUDVisible(true);
 
@@ -149,12 +156,16 @@ public class StageManager : MonoBehaviour
 
         hypeMeter.SetActive(false);
         typingController.SetActive(false);
-        crusherLeft.SetActive(false);
-        crusherRight.SetActive(false);
+        if (crusherLeft != null)  crusherLeft.SetActive(false);
+        if (crusherRight != null) crusherRight.SetActive(false);
+        punchController?.SetActive(false);
 
         gameAudio?.StopHeckler();
         encourageMan.Win();
-        resultPanel.ShowWin();
+
+        typingController.GetTypingStats(out float wpm, out float accuracy);
+        float hype = hypeMeter.NormalizedHype * 100f;
+        resultPanel.ShowWin(wpm, accuracy, hype);
         onPlayerWon?.Invoke();
     }
 
@@ -165,8 +176,9 @@ public class StageManager : MonoBehaviour
 
         hypeMeter.SetActive(false);
         typingController.SetActive(false);
-        crusherLeft.SlamShut();
-        crusherRight.SlamShut();
+        if (crusherLeft != null)  crusherLeft.SlamShut();
+        if (crusherRight != null) crusherRight.SlamShut();
+        punchController?.SetActive(false);
 
         gameAudio?.StopHeckler();
         encourageMan.Die();
@@ -177,7 +189,9 @@ public class StageManager : MonoBehaviour
     private IEnumerator ShowLoseResultDelayed()
     {
         yield return new WaitForSeconds(1f);
-        resultPanel.ShowLose();
+        typingController.GetTypingStats(out float wpm, out float accuracy);
+        float hype = hypeMeter.NormalizedHype * 100f;
+        resultPanel.ShowLose(wpm, accuracy, hype);
     }
 
     private void OnLoseConditionMet()

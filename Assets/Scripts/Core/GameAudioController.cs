@@ -17,6 +17,10 @@ public class GameAudioController : MonoBehaviour
     [Header("Streak Sounds (plays when consecutive streak >= 2)")]
     public AudioClip[] streakSounds;
 
+    [Header("Punch Sounds (T2 Boulder Trial)")]
+    public AudioClip[] normalPunchSounds;
+    public AudioClip[] hookPunchSounds;
+
     [Header("Crowd Heckler Sounds")]
     public AudioClip[] hecklerSounds;
     public int maxHecklerCount = 3;
@@ -95,6 +99,9 @@ public class GameAudioController : MonoBehaviour
         _hecklerActive = false;
     }
 
+    public void PlayNormalPunch() => PlayRandom(normalPunchSounds);
+    public void PlayHookPunch()   => PlayRandom(hookPunchSounds);
+
 
     private void OnWordCompleted()
     {
@@ -110,7 +117,7 @@ public class GameAudioController : MonoBehaviour
 
     private void OnStreakChanged(int streak)
     {
-        // Only play streak sound when an active streak is building (2nd word onward)
+        // Only play streak sound when an active streak is building 
         if (streak < 2) return;
         PlayRandom(streakSounds);
     }

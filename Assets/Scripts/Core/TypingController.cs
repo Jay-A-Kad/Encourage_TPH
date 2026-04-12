@@ -16,7 +16,7 @@ public class TypingController : MonoBehaviour
     public UnityEvent<string> onNewWord;
     public UnityEvent<string, int> onTypingProgress;
 
-    // streak: 1 = first word, 2 = second consecutive, etc.
+    // streak: 1 = first word, 2 = second consecutive
     public UnityEvent<int> onStreakChanged;
 
     public string CurrentWord => _currentWord;
@@ -27,6 +27,8 @@ public class TypingController : MonoBehaviour
     private bool _active;
     private float _elapsedTime;
     private int _streak;
+    private int _totalCorrectLetters;
+    private int _totalWrongKeys;
 
 
     public void Initialize()
@@ -36,6 +38,8 @@ public class TypingController : MonoBehaviour
         _currentWord = string.Empty;
         _lettersTyped = 0;
         _streak = 0;
+        _totalCorrectLetters = 0;
+        _totalWrongKeys = 0;
     }
 
     public void SetActive(bool active)
@@ -68,6 +72,9 @@ public class TypingController : MonoBehaviour
         if (char.ToUpper(key) == char.ToUpper(expected))
         {
             _lettersTyped++;
+            _totalCorrectLetters++;
+            while (_lettersTyped < _currentWord.Length && _currentWord[_lettersTyped] == ' ')
+                _lettersTyped++;
             onCorrectLetter?.Invoke();
             onTypingProgress?.Invoke(_currentWord, _lettersTyped);
 
@@ -81,6 +88,7 @@ public class TypingController : MonoBehaviour
         }
         else
         {
+            _totalWrongKeys++;
             if (_streak > 0)
             {
                 _streak = 0;
@@ -88,6 +96,14 @@ public class TypingController : MonoBehaviour
             }
             onWrongKey?.Invoke();
         }
+    }
+
+    public void GetTypingStats(out float wpm, out float accuracy)
+    {
+        float minutes = _elapsedTime / 60f;
+        wpm = minutes > 0f ? (_totalCorrectLetters / 5f) / minutes : 0f;
+        int total = _totalCorrectLetters + _totalWrongKeys;
+        accuracy = total > 0 ? (_totalCorrectLetters / (float)total) * 100f : 100f;
     }
 
     private void PickNewWord()
@@ -104,7 +120,10 @@ public class TypingController : MonoBehaviour
         }
 
         _currentWord = next;
+        // Skip any leading spaces
         _lettersTyped = 0;
+        while (_lettersTyped < _currentWord.Length && _currentWord[_lettersTyped] == ' ')
+            _lettersTyped++;
         onNewWord?.Invoke(_currentWord);
         onTypingProgress?.Invoke(_currentWord, 0);
     }

@@ -36,4 +36,6 @@ public class HypeConfig : ScriptableObject
 
     [Header("Stage")]
     public float stageDuration = 30f;
+    [Tooltip("Normalized hype level (0–1) that triggers an early win")]
+    [Range(0f, 1f)] public float hypeWinThreshold = 0.95f;
 }

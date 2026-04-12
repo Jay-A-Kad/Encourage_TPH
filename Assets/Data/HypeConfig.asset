@@ -16,16 +16,16 @@ MonoBehaviour:
   maxValue: 100
   correctLetterGain: 1
   completedWordGain: 3
-  wrongKeyPenalty: 4
-  passiveDecayPerSecond: 5
+  wrongKeyPenalty: 3.5
+  passiveDecayPerSecond: 2
   weakThreshold: 25
   strugglingThreshold: 50
   strongThreshold: 75
   baseCloseSpeed: 0.05
   maxPushBackSpeed: 0.04
-  startDistance: 3.2
-  winDistance: 6
-  deathDistance: 2.5
+  startDistance: 3.5
+  winDistance: 5
+  deathDistance: 2
   wordBurstDuration: 0.4
   wordBurstSpeedMultiplier: 1
-  stageDuration: 30
+  stageDuration: 120
