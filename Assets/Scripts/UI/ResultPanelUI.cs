@@ -13,6 +13,8 @@ public class ResultPanelUI : MonoBehaviour
     public TextMeshProUGUI trialsText;
     public Button retryButton;
     public Button nextRoundButton;
+    public Button returnButton;
+    public Button exitButton;
     public StageManager stageManager;
 
     [Header("Win Text")]
@@ -38,6 +40,10 @@ public class ResultPanelUI : MonoBehaviour
             retryButton.onClick.AddListener(OnRetryClicked);
         if (nextRoundButton != null)
             nextRoundButton.onClick.AddListener(OnNextRoundClicked);
+        if (returnButton != null)
+            returnButton.onClick.AddListener(OnReturnClicked);
+        if (exitButton != null)
+            exitButton.onClick.AddListener(OnExitClicked);
     }
 
 
@@ -50,6 +56,8 @@ public class ResultPanelUI : MonoBehaviour
             trialsText.text = $"Trials Completed {currentRound}/{totalRounds}";
         if (retryButton != null) retryButton.gameObject.SetActive(false);
         if (nextRoundButton != null) nextRoundButton.gameObject.SetActive(true);
+        if (returnButton != null) returnButton.gameObject.SetActive(false);
+        if (exitButton != null) exitButton.gameObject.SetActive(false);
         gameObject.SetActive(true);
     }
 
@@ -60,6 +68,8 @@ public class ResultPanelUI : MonoBehaviour
             statsText.text = $"SPEED: {wpm:F0} WPM  |  ACCURACY: {accuracy:F0}%  |  HYPE: {hype:F0}/100";
         if (retryButton != null) retryButton.gameObject.SetActive(true);
         if (nextRoundButton != null) nextRoundButton.gameObject.SetActive(false);
+        if (returnButton != null) returnButton.gameObject.SetActive(true);
+        if (exitButton != null) exitButton.gameObject.SetActive(true);
         gameObject.SetActive(true);
     }
 
@@ -81,5 +91,15 @@ public class ResultPanelUI : MonoBehaviour
     private void OnNextRoundClicked()
     {
         SceneManager.LoadScene(nextSceneName);
+    }
+
+    private void OnReturnClicked()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    private void OnExitClicked()
+    {
+        Application.Quit();
     }
 }
